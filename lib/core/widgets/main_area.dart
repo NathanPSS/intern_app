@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intern_app/core/widgets/banner_top_button.dart';
 import 'package:intern_app/features/registries/domain/datasources/registry_sample_data.dart';
 import 'package:intern_app/features/registries/widgets/registry_data_table.dart';
+import 'package:intern_app/features/sectors/sectors_banner_top.dart';
 import 'package:intern_app/features/user/datasources/user_sample_data.dart';
 import 'package:intern_app/features/user/widgets/user_data_table.dart';
 import 'package:provider/provider.dart';
@@ -130,13 +131,7 @@ class MainArea extends StatelessWidget {
       case 'registry':
         return RegistryBannerTop();
       case 'sectors':
-        return SectorsDataTable(sectors: [
-    SectorModel(id: 'SEC001', name: 'Tecnologia da Informação', internsInSector: 8),
-    SectorModel(id: 'SEC002', name: 'Recursos Humanos', internsInSector: 3),
-    SectorModel(id: 'SEC003', name: 'Marketing', internsInSector: 12),
-    SectorModel(id: 'SEC004', name: 'Financeiro', internsInSector: 0),
-    SectorModel(id: 'SEC005', name: 'Operações', internsInSector: 6),
-    ],); // Add SectorsBannerTop() if you have it
+        return SectorsBannerTop(); // Add SectorsBannerTop() if you have it
       // case 'editUser':
       //   return UserBannerTop(); // Or create EditUserBannerTop()
       case 'userForm':

@@ -14,11 +14,8 @@ class MenuContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          color: Color.fromRGBO(255, 255, 255,0.7),
-          border: Border(
-            left: BorderSide(color: Colors.white,width: 2),
-            bottom: BorderSide(color: Colors.white,width: 2)
-          )
+          color: Colors.transparent,
+          
       ),
       alignment: Alignment.centerLeft,
       width: windowDesktopAppWidth(context) * 0.2,

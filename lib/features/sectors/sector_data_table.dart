@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intern_app/core/constants/window_constants.dart';
 
 class SectorModel {
   final String id;
@@ -359,90 +360,94 @@ class _SectorsDataTableState extends State<SectorsDataTable> {
       );
     }
 
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.all(8.0),
-      child: Column(
-        children: [
-          // Custom table header
-          Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surfaceVariant,
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(12),
-                topRight: Radius.circular(12),
+    return Container(
+      width: windowDesktopAppWidth(context) * 0.8,
+      height: windowDesktopAppHeight(context) * 0.7,
+      child: Card(
+        elevation: 2,
+        margin: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            // Custom table header
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surfaceVariant,
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
+              ),
+              child: Table(
+                columnWidths: const {
+                  0: FixedColumnWidth(100),
+                  1: FlexColumnWidth(3),
+                  2: FixedColumnWidth(120),
+                },
+                children: [
+                  TableRow(
+                    children: [
+                      _buildHeaderCell('ID', 0),
+                      _buildHeaderCell('Nome', 1),
+                      _buildHeaderCell('Estagiários', 2),
+                    ],
+                  ),
+                ],
               ),
             ),
-            child: Table(
-              columnWidths: const {
-                0: FixedColumnWidth(100),
-                1: FlexColumnWidth(3),
-                2: FixedColumnWidth(120),
-              },
-              children: [
-                TableRow(
-                  children: [
-                    _buildHeaderCell('ID', 0),
-                    _buildHeaderCell('Nome', 1),
-                    _buildHeaderCell('Estagiários', 2),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // Custom table body
-          Expanded(
-            child: ListView.builder(
-              itemCount: _sortedSectors.length,
-              itemBuilder: (context, index) {
-                final sector = _sortedSectors[index];
-                return InkWell(
-                  onTap: () => _showSectorDialog(sector),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Theme.of(context).dividerColor,
-                          width: 0.5,
+      
+            // Custom table body
+            Expanded(
+              child: ListView.builder(
+                itemCount: _sortedSectors.length,
+                itemBuilder: (context, index) {
+                  final sector = _sortedSectors[index];
+                  return InkWell(
+                    onTap: () => _showSectorDialog(sector),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(
+                            color: Theme.of(context).dividerColor,
+                            width: 0.5,
+                          ),
                         ),
                       ),
-                    ),
-                    child: Table(
-                      columnWidths: const {
-                        0: FixedColumnWidth(100),
-                        1: FlexColumnWidth(3),
-                        2: FixedColumnWidth(120),
-                      },
-                      children: [
-                        TableRow(
-                          children: [
-                            _buildDataCell(
-                              Text(
-                                sector.id,
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  fontFamily: 'monospace',
+                      child: Table(
+                        columnWidths: const {
+                          0: FixedColumnWidth(100),
+                          1: FlexColumnWidth(3),
+                          2: FixedColumnWidth(120),
+                        },
+                        children: [
+                          TableRow(
+                            children: [
+                              _buildDataCell(
+                                Text(
+                                  sector.id,
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                    fontFamily: 'monospace',
+                                  ),
                                 ),
                               ),
-                            ),
-                            _buildDataCell(
-                              Text(
-                                sector.name,
-                                style: Theme.of(context).textTheme.bodyMedium,
-                                overflow: TextOverflow.ellipsis,
+                              _buildDataCell(
+                                Text(
+                                  sector.name,
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            ),
-                            _buildDataCell(_buildLiveIndicator(sector.internsInSector)),
-                          ],
-                        ),
-                      ],
+                              _buildDataCell(_buildLiveIndicator(sector.internsInSector)),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

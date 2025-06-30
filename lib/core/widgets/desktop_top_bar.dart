@@ -13,11 +13,8 @@ class CustomDesktopBar extends StatelessWidget {
           width: windowDesktopAppWidth(context) * 0.2,
           height: 48,
           decoration: BoxDecoration(
-            color: Color.fromRGBO(255, 255, 255, 0.7),
-            border: Border(
-              top: BorderSide(color: Colors.white, width: 2),
-              left: BorderSide(color: Colors.white, width: 2),
-            ),
+            color: Colors.transparent,
+          
           ),
         ),
         Container(
