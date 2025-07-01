@@ -17,12 +17,14 @@ import '../constants/window_constants.dart'; // Add this dependency to pubspec.y
 
 // This is a CUSTOM class you need to create - it's not from the provider library
 class NavigationProvider extends ChangeNotifier {
-  String _currentScreen = 'users'; // Default screen
+  Map<String,dynamic> _props = {
+    'screen': 'users',
+  }; // Default screen
 
-  String get currentScreen => _currentScreen;
+  Map<String,dynamic> get currentScreen => _props;
 
-  void navigateToScreen(String screenName) {
-    _currentScreen = screenName;
+  void navigateToScreen(Map<String,dynamic> props) {
+    _props = props;
     notifyListeners();
   }
 }
@@ -69,7 +71,7 @@ class MainArea extends StatelessWidget {
                         ),
                       );
                     },
-                    child: _buildBanner(context, navigationProvider.currentScreen),
+                    child: _buildBanner(context, navigationProvider._props['screen']),
                   ),
 
                   // Animated main content area
@@ -100,7 +102,7 @@ class MainArea extends StatelessWidget {
                         },
                         child: Container(
                           key: ValueKey(navigationProvider.currentScreen), // Important for AnimatedSwitcher
-                          child: _buildMainContent(context, navigationProvider.currentScreen),
+                          child: _buildMainContent(context, navigationProvider._props),
                         ),
                       ),
                     ),
@@ -121,11 +123,15 @@ class MainArea extends StatelessWidget {
         return UserBannerTop(bannerTopButtons: [
           BannerTopButton(text: "Informações Básicas", seleted: true, nextScreenFunction: () {
             Provider.of<NavigationProvider>(context, listen: false)
-                .navigateToScreen('users'); // or 'registry', 'sectors', etc.
+                .navigateToScreen({
+    'screen': 'users',
+  }); // or 'registry', 'sectors', etc.
           }),
           BannerTopButton(text: "Cadastro", seleted: false, nextScreenFunction: () {
             Provider.of<NavigationProvider>(context, listen: false)
-                .navigateToScreen('userForm'); // or 'registry', 'sectors', etc.
+                .navigateToScreen({
+    'screen': 'users',
+  } ); // or 'registry', 'sectors', etc.
           }),
         ],);
       case 'registry':
@@ -138,11 +144,15 @@ class MainArea extends StatelessWidget {
         return UserBannerTop(bannerTopButtons: [
           BannerTopButton(text: "Informações Básicas", seleted: false, nextScreenFunction: () {
             Provider.of<NavigationProvider>(context, listen: false)
-                .navigateToScreen('users'); // or 'registry', 'sectors', etc.
+                .navigateToScreen({
+    'screen': 'users',
+  }); // or 'registry', 'sectors', etc.
           }),
           BannerTopButton(text: "Cadastro", seleted: true, nextScreenFunction: () {
             Provider.of<NavigationProvider>(context, listen: false)
-                .navigateToScreen('userForm'); // or 'registry', 'sectors', etc.
+                .navigateToScreen({
+    'screen': 'users',
+  }); // or 'registry', 'sectors', etc.
           }),
         ],); // Or create UserFormBannerTop()
       // case 'signup':
@@ -151,35 +161,40 @@ class MainArea extends StatelessWidget {
         return UserBannerTop(bannerTopButtons: [
           BannerTopButton(text: "Informações Básicas", seleted: true, nextScreenFunction: () {
             Provider.of<NavigationProvider>(context, listen: false)
-                .navigateToScreen('users'); // or 'registry', 'sectors', etc.
+                .navigateToScreen({
+    'screen': 'users',
+  }); // or 'registry', 'sectors', etc.
           }),
           BannerTopButton(text: "Cadastro", seleted: false, nextScreenFunction: () {
             Provider.of<NavigationProvider>(context, listen: false)
-                .navigateToScreen('userForm'); // or 'registry', 'sectors', etc.
+                .navigateToScreen({
+    'screen': 'users',
+  }); // or 'registry', 'sectors', etc.
           }),
         ],); // Default banner
     }
   }
 
   // Build main content based on current screen
-  Widget _buildMainContent(BuildContext context, String currentScreen) {
-    switch (currentScreen) {
+  Widget _buildMainContent(BuildContext context, Map<String,dynamic> props) {
+    switch (props['screen']) {
       case 'users':
         return _buildUsersScreen(context);
       case 'registry':
         return _buildRegistryScreen(context);
       case 'sectors':
         return _buildSectorsScreen(context);
-      case 'editUser':
-        return _buildEditUserScreen(context);
       case 'userForm':
         return _buildUserFormScreen(context);
       case 'signup':
         return _buildSignUpScreen(context);
+      case 'editUserForm':
+        return _buildEditUserScreen(context,props);
       default:
         return _buildUsersScreen(context); // Default screen
     }
   }
+
 
   // Individual screen builders
   Widget _buildUsersScreen(BuildContext context) {
@@ -204,16 +219,10 @@ class MainArea extends StatelessWidget {
     );
   }
 
-  Widget _buildEditUserScreen(BuildContext context) {
+  Widget _buildEditUserScreen(BuildContext context,Map<String,dynamic> props) {
     return Center(
       child: EditUserFormWidget(
-        userData: {
-          'id': '123',
-          'matricula': '2024001',
-          'nomeCompleto': 'João Silva Santos',
-          'email': 'joao.silva@example.com',
-          'tipoUsuario': 'residente',
-        },
+        userData: props['userData'],
       ),
     );
   }

@@ -1,0 +1,1 @@
+enum UserType { admin, doctor, interns }

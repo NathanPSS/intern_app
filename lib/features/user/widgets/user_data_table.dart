@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:intern_app/features/registries/domain/records/registry_data_table_record.dart';
-
-import '../domain/user_data_table_record.dart';
+import 'package:intern_app/core/widgets/main_area.dart';
+import 'package:intern_app/features/user/datasources/user_data_view.dart';
+import 'package:intern_app/features/user/widgets/user_type_widget.dart';
+import 'package:provider/provider.dart';
 
 class UserDataTable extends StatefulWidget {
-  final List<UserDataTableRecord> records;
-  final Function(UserDataTableRecord)? onRowTap;
-  final Function(UserDataTableRecord)? onRowDoubleTap;
+  final List<UserDataView> records;
+  final Function(UserDataView)? onRowTap;
+  final Function(UserDataView)? onRowDoubleTap;
 
   const UserDataTable({
     super.key,
@@ -22,7 +23,7 @@ class UserDataTable extends StatefulWidget {
 class _DesktopDataTableState extends State<UserDataTable> {
   final TextEditingController _userNameController = TextEditingController();
 
-  List<UserDataTableRecord> _filteredRecords = [];
+  List<UserDataView> _filteredRecords = [];
   DateTime? _selectedDate;
 
   @override
@@ -41,17 +42,16 @@ class _DesktopDataTableState extends State<UserDataTable> {
   void _filterRecords() {
     setState(() {
       _filteredRecords = widget.records.where((record) {
-        final usernameMatch = record.userName
-            .toLowerCase()
-            .contains(_userNameController.text.toLowerCase());
+        final usernameMatch = record.userName.toLowerCase().contains(
+          _userNameController.text.toLowerCase(),
+        );
 
         return usernameMatch;
       }).toList();
     });
   }
 
-
-  void _showDetailsDialog(UserDataTableRecord record) {
+  void _showDetailsDialog(UserDataView record) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -99,7 +99,7 @@ class _DesktopDataTableState extends State<UserDataTable> {
                       ),
                     ),
                     SizedBox(width: 50),
-                    record.userType,
+                    UserTypeWidget(userType: record.userType),
                   ],
                 ),
                 const SizedBox(height: 24),
@@ -109,14 +109,43 @@ class _DesktopDataTableState extends State<UserDataTable> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        TextButton(onPressed: (){},
-                          style: TextButton.styleFrom(backgroundColor: Colors.orangeAccent),
-                          child: Container(padding: EdgeInsets.all(4), child: const Text("Editar",style: TextStyle(color: Colors.white),)),
+                        TextButton(
+                          onPressed: () {
+                            if (Navigator.of(context).canPop()) {
+                              Navigator.of(context).pop(); // Close the dialog
+                            }
+                            Provider.of<NavigationProvider>(
+                              context,
+                              listen: false,
+                            ).navigateToScreen({
+                              'screen': 'editUserForm',
+                              'userData': record,
+                            });
+                          },
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.orangeAccent,
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.all(4),
+                            child: const Text(
+                              "Editar",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
                         ),
                         SizedBox(width: 16),
-                        TextButton(onPressed: (){},
-                          style: TextButton.styleFrom(backgroundColor: Colors.red),
-                          child: Container(padding: EdgeInsets.all(4), child: const Text("Remover",style: TextStyle(color: Colors.white),)),
+                        TextButton(
+                          onPressed: () {},
+                          style: TextButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                          child: Container(
+                            padding: EdgeInsets.all(4),
+                            child: const Text(
+                              "Remover",
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -154,10 +183,7 @@ class _DesktopDataTableState extends State<UserDataTable> {
           Expanded(
             child: Text(
               value,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.black87,
-              ),
+              style: const TextStyle(fontSize: 14, color: Colors.black87),
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),
@@ -195,9 +221,7 @@ class _DesktopDataTableState extends State<UserDataTable> {
                 topLeft: Radius.circular(12),
                 topRight: Radius.circular(12),
               ),
-              border: Border(
-                bottom: BorderSide(color: Colors.grey[200]!),
-              ),
+              border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
             ),
             child: Row(
               children: [
@@ -211,7 +235,11 @@ class _DesktopDataTableState extends State<UserDataTable> {
                         controller: _userNameController,
                         decoration: InputDecoration(
                           hintText: 'Buscar por usuário...',
-                          prefixIcon: Icon(Icons.search, size: 18, color: Colors.grey[600]),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            size: 18,
+                            color: Colors.grey[600],
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                             borderSide: BorderSide(color: Colors.grey[300]!),
@@ -222,9 +250,15 @@ class _DesktopDataTableState extends State<UserDataTable> {
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
-                            borderSide: const BorderSide(color: Colors.blue, width: 2),
+                            borderSide: const BorderSide(
+                              color: Colors.blue,
+                              width: 2,
+                            ),
                           ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                           filled: true,
                           fillColor: Colors.white,
                         ),
@@ -272,38 +306,30 @@ class _DesktopDataTableState extends State<UserDataTable> {
                   dataRowHeight: 56,
                   showCheckboxColumn: false,
                   columns: [
-                    const DataColumn(
-                      label: Text('Matricula'),
-                    ),
-                    DataColumn(
-                      label: const Text('Nome'),
-                    ),
-                    DataColumn(
-                      label: const Text('Email'),
-                    ),
-                    DataColumn(
-                      label: const Text('Tipo'),
-                    ),
+                    const DataColumn(label: Text('Matricula')),
+                    DataColumn(label: const Text('Nome')),
+                    DataColumn(label: const Text('Email')),
+                    DataColumn(label: const Text('Tipo')),
                   ],
                   rows: _filteredRecords.asMap().entries.map((entry) {
                     final index = entry.key;
                     final record = entry.value;
 
                     return DataRow(
-                      color: MaterialStateProperty.resolveWith<Color?>(
-                            (Set<MaterialState> states) {
-                          if (states.contains(MaterialState.hovered)) {
-                            return Colors.blue.withOpacity(0.08);
-                          }
-                          if (states.contains(MaterialState.selected)) {
-                            return Colors.blue.withOpacity(0.12);
-                          }
-                          if (index % 2 == 0) {
-                            return Colors.grey.withOpacity(0.03);
-                          }
-                          return Colors.transparent;
-                        },
-                      ),
+                      color: MaterialStateProperty.resolveWith<Color?>((
+                        Set<MaterialState> states,
+                      ) {
+                        if (states.contains(MaterialState.hovered)) {
+                          return Colors.blue.withOpacity(0.08);
+                        }
+                        if (states.contains(MaterialState.selected)) {
+                          return Colors.blue.withOpacity(0.12);
+                        }
+                        if (index % 2 == 0) {
+                          return Colors.grey.withOpacity(0.03);
+                        }
+                        return Colors.transparent;
+                      }),
                       onSelectChanged: (_) => _showDetailsDialog(record),
                       cells: [
                         DataCell(
@@ -324,7 +350,7 @@ class _DesktopDataTableState extends State<UserDataTable> {
                         ),
                         DataCell(Text(record.userName)),
                         DataCell(Text(record.userEmail)),
-                        DataCell(record.userType),
+                        DataCell(UserTypeWidget(userType: record.userType)),
                       ],
                     );
                   }).toList(),
@@ -343,17 +369,13 @@ class StatusChip extends StatelessWidget {
   final String text;
   final Widget type;
 
-  const StatusChip({
-    super.key,
-    required this.text,
-    required this.type,
-  });
+  const StatusChip({super.key, required this.text, required this.type});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      child: type
+      child: type,
     );
   }
 }

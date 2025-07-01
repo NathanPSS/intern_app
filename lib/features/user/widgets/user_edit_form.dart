@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intern_app/features/user/datasources/user_data_view.dart';
+import 'package:intern_app/features/user/domain/user_type.dart';
 
-enum UserType { administrador, residente, preceptor }
 
 class EditUserFormWidget extends StatefulWidget {
-  final Map<String, dynamic> userData;
-  final Function(Map<String, dynamic>)? onFormSubmit;
+  final UserDataView userData;
+  final Function(UserDataView)? onFormSubmit;
   final Function(String)? onPasswordChange;
 
   const EditUserFormWidget({
@@ -24,12 +25,13 @@ class _EditUserFormWidgetState extends State<EditUserFormWidget> {
   final _nomeController = TextEditingController();
   final _emailController = TextEditingController();
 
-  UserType? _selectedUserType;
+  
   bool _isLoading = false;
   bool _hasUnsavedChanges = false;
 
   // Store original data for comparison
-  late Map<String, dynamic> _originalData;
+  late UserDataView _originalData;
+  late UserType _selectedUserType;
 
   @override
   void initState() {
@@ -38,19 +40,12 @@ class _EditUserFormWidgetState extends State<EditUserFormWidget> {
   }
 
   void _initializeForm() {
-    _originalData = Map<String, dynamic>.from(widget.userData);
+    _originalData = widget.userData;
 
-    _matriculaController.text = widget.userData['matricula'] ?? '';
-    _nomeController.text = widget.userData['nomeCompleto'] ?? '';
-    _emailController.text = widget.userData['email'] ?? '';
-
-    final userTypeString = widget.userData['tipoUsuario'];
-    if (userTypeString != null) {
-      _selectedUserType = UserType.values.firstWhere(
-            (type) => type.name == userTypeString,
-        orElse: () => UserType.administrador,
-      );
-    }
+    _matriculaController.text = widget.userData.userMatricula;
+    _nomeController.text = widget.userData.userName;
+    _emailController.text = widget.userData.userEmail;
+    _selectedUserType = widget.userData.userType; 
 
     // Add listeners to detect changes
     _matriculaController.addListener(_detectChanges);
@@ -60,10 +55,10 @@ class _EditUserFormWidgetState extends State<EditUserFormWidget> {
 
   void _detectChanges() {
     final currentData = _getCurrentFormData();
-    final hasChanges = _originalData['matricula'] != currentData['matricula'] ||
-        _originalData['nomeCompleto'] != currentData['nomeCompleto'] ||
-        _originalData['email'] != currentData['email'] ||
-        _originalData['tipoUsuario'] != currentData['tipoUsuario'];
+    final hasChanges = _originalData.userMatricula != currentData.userMatricula ||
+        _originalData.userName != currentData.userName ||
+        _originalData.userEmail != currentData.userEmail ||
+        _originalData.userType != currentData.userType;
 
     if (hasChanges != _hasUnsavedChanges) {
       setState(() {
@@ -72,13 +67,13 @@ class _EditUserFormWidgetState extends State<EditUserFormWidget> {
     }
   }
 
-  Map<String, dynamic> _getCurrentFormData() {
-    return {
-      'matricula': _matriculaController.text.trim(),
-      'nomeCompleto': _nomeController.text.trim(),
-      'email': _emailController.text.trim(),
-      'tipoUsuario': _selectedUserType?.name,
-    };
+  UserDataView _getCurrentFormData() {
+    return UserDataView(
+      userMatricula: _matriculaController.text.trim(),
+      userName: _nomeController.text.trim(),
+      userEmail: _emailController.text.trim(),
+      userType:  _selectedUserType,
+    );
   }
 
   @override
@@ -322,7 +317,6 @@ class _EditUserFormWidgetState extends State<EditUserFormWidget> {
     await Future.delayed(const Duration(milliseconds: 800));
 
     final formData = _getCurrentFormData();
-    formData['id'] = widget.userData['id']; // Include user ID for update
 
     setState(() {
       _isLoading = false;
@@ -330,7 +324,7 @@ class _EditUserFormWidgetState extends State<EditUserFormWidget> {
     });
 
     // Update original data
-    _originalData = Map<String, dynamic>.from(formData);
+    _originalData = formData;
 
     if (widget.onFormSubmit != null) {
       widget.onFormSubmit!(formData);
@@ -371,55 +365,50 @@ class _EditUserFormWidgetState extends State<EditUserFormWidget> {
   }
 
   void _resetForm() {
-    _matriculaController.text = _originalData['matricula'] ?? '';
-    _nomeController.text = _originalData['nomeCompleto'] ?? '';
-    _emailController.text = _originalData['email'] ?? '';
+    _matriculaController.text = _originalData.userMatricula;
+    _nomeController.text = _originalData.userName;
+    _emailController.text = _originalData.userEmail;
 
-    final userTypeString = _originalData['tipoUsuario'];
-    if (userTypeString != null) {
-      _selectedUserType = UserType.values.firstWhere(
-            (type) => type.name == userTypeString,
-        orElse: () => UserType.administrador,
-      );
-    }
+    _selectedUserType = _originalData.userType;
 
     setState(() {
       _hasUnsavedChanges = false;
     });
   }
 
-  String _getUserTypeLabel(UserType type) {
-    switch (type) {
-      case UserType.administrador:
-        return 'Administrador';
-      case UserType.residente:
-        return 'Residente';
-      case UserType.preceptor:
-        return 'Preceptor';
-    }
-  }
 
   Widget _getUserTypeImage(UserType type) {
     // For now using placeholder icons, replace with Image.asset() for your PNGs
     switch (type) {
-      case UserType.administrador:
+      case UserType.admin:
         return const Icon(
           Icons.admin_panel_settings,
           size: 48,
           color: Colors.blueGrey,
         );
-      case UserType.residente:
+      case UserType.interns:
         return const Icon(
           Icons.school,
           size: 48,
           color: Colors.green,
         );
-      case UserType.preceptor:
+      case UserType.doctor:
         return const Icon(
           Icons.person_2,
           size: 48,
           color: Colors.orange,
         );
+    }
+  }
+
+  String _getUserTypeLabel(UserType type){
+    switch(type){
+      case UserType.admin:
+      return "Administração";
+      case UserType.doctor:
+      return "Preceptor";
+      case UserType.interns:
+      return "Residentes";
     }
   }
 
@@ -604,7 +593,7 @@ class _EditUserFormWidgetState extends State<EditUserFormWidget> {
                                           groupValue: _selectedUserType,
                                           onChanged: (value) {
                                             setState(() {
-                                              _selectedUserType = value;
+                                              _selectedUserType = type;
                                             });
                                             _detectChanges();
                                           },
