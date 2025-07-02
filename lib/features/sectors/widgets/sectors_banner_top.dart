@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intern_app/core/constants/window_constants.dart';
-import 'package:intern_app/features/user/widgets/user_search.dart';
+
 
 class SectorsBannerTop extends StatelessWidget {
-  const SectorsBannerTop({super.key});
+  const SectorsBannerTop({super.key, required this.bannerTopButtons});
+
+  final List<Widget> bannerTopButtons;
 
   @override
   Widget build(BuildContext context) {
@@ -11,7 +13,7 @@ class SectorsBannerTop extends StatelessWidget {
       color: Colors.white,
       padding: const EdgeInsets.only(left: 16, right: 16, top: 8, bottom: 8),
       width:
-      windowDesktopAppWidth(context) -
+          windowDesktopAppWidth(context) -
           (windowDesktopAppWidth(context) * 0.2),
       height: windowDesktopAppHeight(context) * 0.136,
       child: Column(
@@ -26,20 +28,8 @@ class SectorsBannerTop extends StatelessWidget {
             ),
           ),
           Row(
-            children: [
-              Container(
-                decoration: BoxDecoration(
-                    border: Border(
-                        bottom: BorderSide(
-                            color: Theme.of(context).colorScheme.primaryFixedDim,
-                            width: 3
-                        ))),
-                child: Text(
-                  "Informações Básicas",
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
+            spacing: 24,
+            children: bannerTopButtons
           ),
         ],
       ),

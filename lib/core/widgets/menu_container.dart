@@ -29,8 +29,8 @@ class MenuContainer extends StatelessWidget {
                   MenuButton(
                     icon: Image.asset(
                       "assets/imgs/group.png",
-                      width: 44,
-                      height: 44,
+                      width: 36,
+                      height: 36,
                     ),
                     nextScreenFunction: () {
                       Provider.of<NavigationProvider>(
@@ -42,8 +42,8 @@ class MenuContainer extends StatelessWidget {
                   MenuButton(
                     icon: Image.asset(
                       "assets/imgs/report.png",
-                      width: 44,
-                      height: 44,
+                      width: 36,
+                      height: 36,
                     ),
                     nextScreenFunction: () {
                       Provider.of<NavigationProvider>(
@@ -55,8 +55,21 @@ class MenuContainer extends StatelessWidget {
                   MenuButton(
                     icon: Image.asset(
                       "assets/imgs/pie-chart.png",
-                      width: 44,
-                      height: 44,
+                      width: 36,
+                      height: 36,
+                    ),
+                    nextScreenFunction: () {
+                      Provider.of<NavigationProvider>(
+                        context,
+                        listen: false,
+                      ).navigateToScreen({'screen': 'sectors'});
+                    },
+                  ),
+                  MenuButton(
+                    icon: Image.asset(
+                      "assets/imgs/tablet.png",
+                      width: 36,
+                      height: 36,
                     ),
                     nextScreenFunction: () {
                       Provider.of<NavigationProvider>(

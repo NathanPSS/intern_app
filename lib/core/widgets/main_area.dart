@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:intern_app/core/widgets/banner_top_button.dart';
 import 'package:intern_app/features/registries/domain/datasources/registry_sample_data.dart';
 import 'package:intern_app/features/registries/widgets/registry_data_table.dart';
-import 'package:intern_app/features/sectors/sectors_banner_top.dart';
+import 'package:intern_app/features/sectors/widgets/sector_form.dart';
+import 'package:intern_app/features/sectors/widgets/sectors_banner_top.dart';
 import 'package:intern_app/features/user/datasources/user_sample_data.dart';
 import 'package:intern_app/features/user/widgets/user_data_table.dart';
 import 'package:provider/provider.dart';
 
 import '../../features/registries/widgets/registry_banner_top.dart';
-import '../../features/sectors/sector_data_table.dart';
+import '../../features/sectors/widgets/sector_data_table.dart';
 import '../../features/user/widgets/singup_user_form.dart';
 import '../../features/user/widgets/user_banner_top.dart';
 import '../../features/user/widgets/user_edit_form.dart';
@@ -130,16 +131,27 @@ class MainArea extends StatelessWidget {
           BannerTopButton(text: "Cadastro", seleted: false, nextScreenFunction: () {
             Provider.of<NavigationProvider>(context, listen: false)
                 .navigateToScreen({
-    'screen': 'users',
+    'screen': 'userForm',
   } ); // or 'registry', 'sectors', etc.
           }),
         ],);
       case 'registry':
         return RegistryBannerTop();
       case 'sectors':
-        return SectorsBannerTop(); // Add SectorsBannerTop() if you have it
-      // case 'editUser':
-      //   return UserBannerTop(); // Or create EditUserBannerTop()
+        return SectorsBannerTop(bannerTopButtons: [
+          BannerTopButton(text: "Informações Básicas", seleted: true, nextScreenFunction: (){
+            Provider.of<NavigationProvider>(context,listen: false).navigateToScreen({
+              'screen': 'sectors'
+            });
+          }),
+
+          BannerTopButton(text: "Cadastro", seleted: false, nextScreenFunction: (){
+            Provider.of<NavigationProvider>(context,listen: false).navigateToScreen({
+              'screen': 'sectorsForm'
+            });
+          }),
+          
+        ]);
       case 'userForm':
         return UserBannerTop(bannerTopButtons: [
           BannerTopButton(text: "Informações Básicas", seleted: false, nextScreenFunction: () {
@@ -151,12 +163,24 @@ class MainArea extends StatelessWidget {
           BannerTopButton(text: "Cadastro", seleted: true, nextScreenFunction: () {
             Provider.of<NavigationProvider>(context, listen: false)
                 .navigateToScreen({
-    'screen': 'users',
+    'screen': 'userForm',
   }); // or 'registry', 'sectors', etc.
           }),
-        ],); // Or create UserFormBannerTop()
-      // case 'signup':
-      //   return UserBannerTop(); // Or create SignUpBannerTop()
+        ],);
+        case 'sectorsForm':
+        return SectorsBannerTop(bannerTopButtons: [
+          BannerTopButton(text: "Informações Básicas", seleted: false, nextScreenFunction: (){
+            Provider.of<NavigationProvider>(context,listen: false).navigateToScreen({
+              'screen': 'sectors'
+            });
+          }),
+
+          BannerTopButton(text: "Cadastro", seleted: true, nextScreenFunction: (){
+            Provider.of<NavigationProvider>(context,listen: false).navigateToScreen({
+              'screen': 'sectorsForm'
+            });
+          })
+        ],);
       default:
         return UserBannerTop(bannerTopButtons: [
           BannerTopButton(text: "Informações Básicas", seleted: true, nextScreenFunction: () {
@@ -168,7 +192,7 @@ class MainArea extends StatelessWidget {
           BannerTopButton(text: "Cadastro", seleted: false, nextScreenFunction: () {
             Provider.of<NavigationProvider>(context, listen: false)
                 .navigateToScreen({
-    'screen': 'users',
+    'screen': 'userForm',
   }); // or 'registry', 'sectors', etc.
           }),
         ],); // Default banner
@@ -190,6 +214,8 @@ class MainArea extends StatelessWidget {
         return _buildSignUpScreen(context);
       case 'editUserForm':
         return _buildEditUserScreen(context,props);
+      case 'sectorsForm':
+        return _buildCreateSectorForm(context);
       default:
         return _buildUsersScreen(context); // Default screen
     }
@@ -239,3 +265,7 @@ class MainArea extends StatelessWidget {
     );
   }
 }
+
+  Widget _buildCreateSectorForm(BuildContext context){
+    return CreateSectorForm(nextCode: 'SEC001', onSave: (x) {});
+  }
